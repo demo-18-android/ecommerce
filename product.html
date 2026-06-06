@@ -32,17 +32,69 @@
         </div>
     </nav>
 
-    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-12" id="product-container">
-        </main>
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12" id="product-container">
+            </div>
+
+        <hr class="my-12 border-slate-200">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="md:col-span-1 space-y-6">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-900 mb-2">Customer Feedback</h3>
+                    <div class="flex items-center space-x-4">
+                        <span id="avg-rating-text" class="text-4xl font-black text-slate-900">0.0</span>
+                        <div>
+                            <div id="avg-stars" class="text-amber-400 text-sm flex space-x-0.5"></div>
+                            <p id="review-count-text" class="text-xs text-slate-400 mt-0.5">Based on 0 reviews</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
+                    <h4 class="font-bold text-sm text-slate-800">Write a Review</h4>
+                    
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1 font-semibold">Your Rating</label>
+                        <div class="flex space-x-1 text-xl text-slate-200" id="star-selector">
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition-colors" onclick="setFormRating(1)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition-colors" onclick="setFormRating(2)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition-colors" onclick="setFormRating(3)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition-colors" onclick="setFormRating(4)"></i>
+                            <i class="fa-solid fa-star cursor-pointer hover:text-amber-400 transition-colors" onclick="setFormRating(5)"></i>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1 font-semibold">Your Name</label>
+                        <input type="text" id="reviewer-name" placeholder="E.g. Shusnato" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs focus:outline-indigo-600 text-slate-900">
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 block mb-1 font-semibold">Comments</label>
+                        <textarea id="reviewer-text" rows="3" placeholder="Share your experience with this item..." class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-xs focus:outline-indigo-600 text-slate-900 resize-none"></textarea>
+                    </div>
+
+                    <button onclick="submitReview()" class="w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-600 transition shadow-md">
+                        Submit Review
+                    </button>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 mb-2">Verified Purchases</h3>
+                <div id="reviews-list" class="space-y-4">
+                    </div>
+            </div>
+        </div>
+    </main>
 
     <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
         <div class="p-6 border-b flex justify-between items-center bg-slate-50">
             <h2 class="text-lg font-bold text-slate-900">Your Drawer Cart</h2>
             <button onclick="toggleCart()" class="text-2xl font-bold text-slate-400 hover:text-slate-600 transition focus:outline-none">&times;</button>
         </div>
-        
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
-        
         <div class="p-6 border-t bg-slate-50 space-y-3">
             <div class="flex justify-between font-bold text-slate-900 text-lg">
                 <span>Total:</span>
@@ -51,15 +103,14 @@
             <a href="checkout.html" class="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-indigo-600 transition block text-center shadow-md">Go To Checkout</a>
         </div>
     </div>
-    
     <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-slate-900 opacity-0 pointer-events-none transition-opacity duration-300 z-30"></div>
 
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12">
-        &copy; 2026 NEXUSSHOP Standalone Page View Engine.
+        &copy; 2026 NEXUSSHOP Review Engine.
     </footer>
 
     <script>
-        // 1. Core Native Product Database Mirror Array
+        // 1. Product Inventory Array
         const products = [
             { id: 1, name: "Minimalist Cotton Tee", price: 35.00, category: "apparel", image: "https://picsum.photos/id/26/600/600", color: "Off-White", description: "A premium, heavyweight organic cotton tee tailored for a perfect modern fit. Pre-shrunk and exceptionally soft for everyday casual wear." },
             { id: 2, name: "Acetate Sunglasses", price: 120.00, category: "accessories", image: "https://picsum.photos/id/64/600/600", color: "Tortoise Shell", description: "Handcrafted acetate frames featuring 100% UVA/UVB protected polarized lenses. Designed for ultimate structural durability and style." },
@@ -69,8 +120,10 @@
             { id: 6, name: "Minimalist Leather Watch", price: 185.00, category: "accessories", image: "https://picsum.photos/id/175/600/600", color: "White / Tan", description: "Features a clean, unadorned white watch face encased in brushed stainless steel, paired beautifully with an authentic top-grain leather strap." }
         ];
 
-        // 2. Global Core Cart State Management Engine Local Instances
+        // 2. Global Core Cart State Management
         let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
+        let selectedFormRating = 0;
+        let currentProductId = null;
 
         function addToCart(id, quantity = 1) {
             const targetProduct = products.find(p => p.id === parseInt(id));
@@ -180,13 +233,13 @@
             }, 2500);
         }
 
-        // 3. Dynamic Product Display Initializers
+        // 3. Dynamic Product Display & Review Loading Logic
         document.addEventListener('DOMContentLoaded', () => {
             updateCartUI();
             
             const urlParams = new URLSearchParams(window.location.search);
-            const productId = parseInt(urlParams.get('id'));
-            const product = products.find(p => p.id === productId);
+            currentProductId = parseInt(urlParams.get('id'));
+            const product = products.find(p => p.id === currentProductId);
             const container = document.getElementById('product-container');
             
             if(!product) {
@@ -219,6 +272,9 @@
                         </button>
                     </div>
                 </div>`;
+
+            // Display current matching storage metrics
+            loadReviews();
         });
 
         function adjustPageQty(delta) {
@@ -233,6 +289,121 @@
             const qtyElement = document.getElementById('page-qty');
             const qty = qtyElement ? parseInt(qtyElement.innerText) : 1;
             addToCart(id, qty); 
+        }
+
+        // ==========================================
+        // PERSISTENT LOCAL STORAGE REVIEW ENGINE
+        // ==========================================
+        
+        // Highlights the input form stars based on selection index metrics
+        function setFormRating(rating) {
+            selectedFormRating = rating;
+            const stars = document.getElementById('star-selector').children;
+            for (let i = 0; i < stars.length; i++) {
+                if (i < rating) {
+                    stars[i].className = "fa-solid fa-star cursor-pointer text-amber-400 transition-colors";
+                } else {
+                    stars[i].className = "fa-solid fa-star cursor-pointer text-slate-200 transition-colors";
+                }
+            }
+        }
+
+        function submitReview() {
+            const nameField = document.getElementById('reviewer-name');
+            const textField = document.getElementById('reviewer-text');
+            const name = nameField.value.trim();
+            const text = textField.value.trim();
+
+            if (selectedFormRating === 0) {
+                alert("Please click a star to provide a rating level before submitting.");
+                return;
+            }
+            if (!name || !text) {
+                alert("Please fully fill out your name and review message fields.");
+                return;
+            }
+
+            // Pull matching product records container map
+            let allReviews = JSON.parse(localStorage.getItem('nexus_reviews')) || {};
+            if (!allReviews[currentProductId]) {
+                allReviews[currentProductId] = [];
+            }
+
+            const newReview = {
+                id: Date.now(),
+                name: name,
+                rating: selectedFormRating,
+                text: text,
+                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            };
+
+            allReviews[currentProductId].unshift(newReview);
+            localStorage.setItem('nexus_reviews', JSON.stringify(allReviews));
+
+            // Clear input metrics form state fields
+            nameField.value = '';
+            textField.value = '';
+            setFormRating(0);
+
+            // Recompile calculations metrics layout instantly
+            loadReviews();
+            showToast("Review published to local store cache!");
+        }
+
+        function loadReviews() {
+            const reviewsContainer = document.getElementById('reviews-list');
+            const avgText = document.getElementById('avg-rating-text');
+            const avgStarsContainer = document.getElementById('avg-stars');
+            const countText = document.getElementById('review-count-text');
+
+            let allReviews = JSON.parse(localStorage.getItem('nexus_reviews')) || {};
+            let productReviews = allReviews[currentProductId] || [];
+
+            if (productReviews.length === 0) {
+                reviewsContainer.innerHTML = `
+                    <div class="text-center py-12 bg-white rounded-2xl border border-slate-100 text-slate-400 text-xs">
+                        <i class="fa-regular fa-comment-dots text-2xl mb-1.5 block text-slate-300"></i>
+                        No customer reviews posted for this item yet. Be the first!
+                    </div>`;
+                avgText.innerText = "0.0";
+                countText.innerText = "Based on 0 reviews";
+                avgStarsContainer.innerHTML = '<i class="fa-regular fa-star"></i>'.repeat(5);
+                return;
+            }
+
+            // Render matching list strings loop out
+            reviewsContainer.innerHTML = '';
+            let sumRating = 0;
+
+            productReviews.forEach(rev => {
+                sumRating += rev.rating;
+                
+                // Construct score star layouts
+                let reviewStars = '<i class="fa-solid fa-star"></i>'.repeat(rev.rating) + 
+                                  '<i class="fa-regular fa-star text-slate-200"></i>'.repeat(5 - rev.rating);
+
+                reviewsContainer.innerHTML += `
+                    <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-sm space-y-2 text-xs transition hover:shadow-md">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h5 class="font-bold text-slate-900">${rev.name}</h5>
+                                <div class="text-amber-400 text-[10px] mt-0.5 flex space-x-0.5">${reviewStars}</div>
+                            </div>
+                            <span class="text-[10px] text-slate-400 font-medium">${rev.date}</span>
+                        </div>
+                        <p class="text-slate-600 leading-relaxed pt-1">${rev.text}</p>
+                    </div>`;
+            });
+
+            // Calculate feedback averages dynamically
+            const averageScore = sumRating / productReviews.length;
+            avgText.innerText = averageScore.toFixed(1);
+            countText.innerText = `Based on ${productReviews.length} verified review${productReviews.length > 1 ? 's' : ''}`;
+
+            // Build total aggregate star graphics
+            let fullStars = Math.round(averageScore);
+            avgStarsContainer.innerHTML = '<i class="fa-solid fa-star"></i>'.repeat(fullStars) + 
+                                          '<i class="fa-regular fa-star text-slate-200"></i>'.repeat(5 - fullStars);
         }
     </script>
 </body>
