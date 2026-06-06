@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Display View</title>
+    <title>Product Display View - NexusShop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -15,30 +15,64 @@
         <span id="toast-message">Added to cart!</span>
     </div>
 
-    <nav class="bg-white shadow-sm border-b border-slate-100 h-16 flex items-center px-4 max-w-7xl mx-auto w-full justify-between">
-        <a href="index.html" class="text-xl font-black text-slate-900">NEXUS<span class="text-indigo-600">SHOP</span></a>
-        <button onclick="toggleCart()" class="relative p-2"><i class="fa-solid fa-bag-shopping text-xl"></i><span id="cart-count" class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span></button>
+    <nav class="bg-white shadow-sm border-b border-slate-100 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="index.html" class="text-xl font-black text-slate-900 tracking-wider">NEXUS<span class="text-indigo-600">SHOP</span></a>
+            
+            <button onclick="toggleCart()" class="relative p-2 text-slate-700 hover:text-indigo-600 transition focus:outline-none">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span id="cart-count" class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+            </button>
+        </div>
     </nav>
 
     <main class="flex-grow max-w-5xl mx-auto w-full px-4 py-12 grid grid-cols-1 md:grid-cols-2 gap-12" id="product-container">
         </main>
 
-    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col"><div class="p-6 border-b flex justify-between items-center"><h2 class="text-lg font-bold">Your Drawer Cart</h2><button onclick="toggleCart()" class="text-2xl font-bold text-slate-400">&times;</button></div><div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div><div class="p-6 border-t bg-slate-50"><div class="flex justify-between font-bold mb-4"><span>Total:</span><span id="cart-total">$0.00</span></div><a href="checkout.html" class="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-indigo-600 transition block text-center">Go To Checkout</a></div></div><div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-slate-900 opacity-0 pointer-events-none transition-opacity duration-300 z-30"></div>
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <div class="p-6 border-b flex justify-between items-center bg-slate-50">
+            <h2 class="text-lg font-bold text-slate-900">Your Drawer Cart</h2>
+            <button onclick="toggleCart()" class="text-2xl font-bold text-slate-400 hover:text-slate-600 transition">&times;</button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
+        
+        <div class="p-6 border-t bg-slate-50 space-y-3">
+            <div class="flex justify-between font-bold text-slate-900 text-lg">
+                <span>Total:</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <a href="checkout.html" class="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-indigo-600 transition block text-center">Go To Checkout</a>
+        </div>
+    </div>
+    
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-slate-900 opacity-0 pointer-events-none transition-opacity duration-300 z-30"></div>
+
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12">
+        &copy; 2026 NEXUSSHOP Client Engine Catalog Profile Page.
+    </footer>
 
     <script src="js/products.js"></script>
     <script src="js/app.js"></script>
+    
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = parseInt(urlParams.get('id'));
+            
+            // Look up matching product using global products array loaded from products.js
             const product = products.find(p => p.id === productId);
-
             const container = document.getElementById('product-container');
+            
             if(!product) {
-                container.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-slate-400">Product profile not located.</p><a href="index.html" class="text-indigo-600 underline text-sm mt-2 inline-block">Return home</a></div>`;
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-20">
+                        <p class="text-slate-400">Product profile could not be located.</p>
+                        <a href="index.html" class="text-indigo-600 underline text-sm mt-2 inline-block">Return home to catalogue</a>
+                    </div>`;
                 return;
             }
 
+            // Build page details component block dynamically
             container.innerHTML = `
                 <div class="bg-white rounded-2xl p-12 border border-slate-100 flex items-center justify-center text-slate-300 h-96">
                     <i class="fa-solid ${product.icon} text-9xl"></i>
@@ -50,27 +84,33 @@
                     <p class="text-2xl font-black text-slate-900 mt-4">$${product.price.toFixed(2)}</p>
                     <p class="text-slate-500 text-sm mt-6 leading-relaxed">${product.description}</p>
                     <div class="mt-8 flex items-center space-x-4">
-                        <div class="flex items-center border border-slate-200 rounded-xl bg-white">
-                            <button onclick="adjustPageQty(-1)" class="px-4 py-2 font-bold hover:bg-slate-50">-</button>
-                            <span id="page-qty" class="px-4 font-bold text-sm">1</span>
-                            <button onclick="adjustPageQty(1)" class="px-4 py-2 font-bold hover:bg-slate-50">+</button>
+                        <div class="flex items-center border border-slate-200 rounded-xl bg-white shadow-sm">
+                            <button onclick="adjustPageQty(-1)" class="px-4 py-2 font-bold hover:bg-slate-50 transition">-</button>
+                            <span id="page-qty" class="px-4 font-bold text-sm select-none">1</span>
+                            <button onclick="adjustPageQty(1)" class="px-4 py-2 font-bold hover:bg-slate-50 transition">+</button>
                         </div>
-                        <button onclick="executePageAdd(${product.id})" class="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition">Add to Basket</button>
+                        <button onclick="executePageAdd(${product.id})" class="flex-1 bg-slate-900 text-white py-3 rounded-xl font-bold hover:bg-indigo-600 transition shadow-md">
+                            Add to Basket
+                        </button>
                     </div>
                 </div>
             `;
         });
 
+        // Simple local functions to drive the dynamic interface elements counter inside details sheet
         function adjustPageQty(delta) {
             const qtyLabel = document.getElementById('page-qty');
+            if(!qtyLabel) return;
             let current = parseInt(qtyLabel.innerText) + delta;
             if(current < 1) current = 1;
             qtyLabel.innerText = current;
         }
 
+        // Passes context cleanly to the main global engine inside app.js
         function executePageAdd(id) {
-            const qty = parseInt(document.getElementById('page-qty').innerText);
-            addToCart(id, qty);
+            const qtyElement = document.getElementById('page-qty');
+            const qty = qtyElement ? parseInt(qtyElement.innerText) : 1;
+            addToCart(id, qty); 
         }
     </script>
 </body>
