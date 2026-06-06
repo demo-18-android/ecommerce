@@ -3,7 +3,7 @@ html {
     scroll-behavior: smooth;
 }
 
-/* Custom subtle scrollbar styling for the cart drawer */
+/* Custom subtle scrollbar styling for the cart drawer layout panels */
 ::-webkit-scrollbar {
     width: 6px;
 }
