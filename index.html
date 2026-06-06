@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Storefront (Frontend Only)</title>
+    <title>NexusShop Storefront</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans relative overflow-x-hidden min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col relative overflow-x-hidden">
 
     <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-6 py-3 rounded-lg shadow-xl z-50 flex items-center space-x-3 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
         <i class="fa-solid fa-circle-check text-emerald-400"></i>
@@ -15,198 +16,93 @@
     </div>
 
     <nav class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex-shrink-0">
-                    <a href="#" class="text-xl font-black tracking-wider text-slate-900">NEXUS<span class="text-indigo-600">SHOP</span></a>
-                </div>
-                
-                <div class="hidden sm:block flex-1 max-w-md mx-8">
-                    <div class="relative">
-                        <input type="text" id="search-input" oninput="filterProducts()" placeholder="Search products..." class="w-full bg-slate-100 pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
-                    </div>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <button onclick="toggleCart()" class="text-slate-700 hover:text-indigo-600 transition relative p-2 focus:outline-none">
-                        <i class="fa-solid fa-bag-shopping text-xl"></i>
-                        <span id="cart-count" class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
-                    </button>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
+            <a href="index.html" class="text-xl font-black tracking-wider text-slate-900">NEXUS<span class="text-indigo-600">SHOP</span></a>
+            
+            <div class="flex-1 max-w-md mx-8 hidden sm:block">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Search products..." class="w-full bg-slate-100 pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-xs"></i>
                 </div>
             </div>
+
+            <button onclick="toggleCart()" class="text-slate-700 hover:text-indigo-600 transition relative p-2">
+                <i class="fa-solid fa-bag-shopping text-xl"></i>
+                <span id="cart-count" class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">0</span>
+            </button>
         </div>
     </nav>
 
-    <div class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
-        
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
         <div class="flex space-x-2 overflow-x-auto pb-4 mb-8 border-b border-slate-200">
-            <button onclick="setCategory('all')" id="filter-all" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-600 text-white shadow-sm transition">All Products</button>
+            <button onclick="setCategory('all')" id="filter-all" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-600 text-white transition">All Products</button>
             <button onclick="setCategory('apparel')" id="filter-apparel" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200">Apparel</button>
             <button onclick="setCategory('accessories')" id="filter-accessories" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200">Accessories</button>
             <button onclick="setCategory('gear')" id="filter-gear" class="filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-600 hover:bg-slate-100 transition border border-slate-200">Gear</button>
         </div>
 
-        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            </div>
-    </div>
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"></div>
+    </main>
 
-    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[450px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    <div id="cart-drawer" class="fixed inset-y-0 right-0 w-full sm:w-[400px] bg-white shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
         <div class="p-6 border-b flex justify-between items-center bg-slate-50">
-            <div>
-                <h2 class="text-lg font-bold text-slate-900">Shopping Cart</h2>
-                <p class="text-xs text-slate-400 mt-0.5">Your local client-side session items</p>
-            </div>
-            <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-800 text-2xl p-2 transition">&times;</button>
+            <h2 class="text-lg font-bold text-slate-900">Your Drawer Cart</h2>
+            <button onclick="toggleCart()" class="text-slate-400 hover:text-slate-800 text-2xl p-2">&times;</button>
         </div>
-
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4">
-            </div>
-
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-4"></div>
         <div class="p-6 border-t bg-slate-50 space-y-3">
-            <div class="flex justify-between text-sm text-slate-500">
-                <span>Subtotal</span>
-                <span id="cart-subtotal">$0.00</span>
+            <div class="flex justify-between font-bold text-slate-900 text-lg">
+                <span>Total:</span><span id="cart-total">$0.00</span>
             </div>
-            <div class="flex justify-between text-sm text-slate-500">
-                <span>Shipping</span>
-                <span class="text-emerald-600 font-medium">FREE</span>
-            </div>
-            <div class="flex justify-between font-bold text-slate-900 text-lg pt-2 border-t border-slate-200">
-                <span>Total:</span>
-                <span id="cart-total">$0.00</span>
-            </div>
-            <button onclick="simulatedCheckout()" class="w-full mt-2 bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-indigo-600 transition shadow-md flex items-center justify-center space-x-2">
-                <span>Secure Client Checkout</span>
-                <i class="fa-solid fa-arrow-right text-xs"></i>
-            </button>
+            <a href="checkout.html" class="w-full bg-slate-900 text-white py-3 rounded-xl font-semibold hover:bg-indigo-600 transition block text-center">Go To Checkout</a>
         </div>
     </div>
-
     <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-slate-900 opacity-0 pointer-events-none transition-opacity duration-300 z-30"></div>
 
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
-        &copy; 2026 NEXUSSHOP Front-End Engine. Data persistent via LocalStorage.
+        &copy; 2026 NEXUSSHOP Client Catalog.
     </footer>
 
+    <script src="js/products.js"></script>
+    <script src="js/app.js"></script>
     <script>
-        // Mock Product Inventory Schema (Replacing a backend database API response)
-        const products = [
-            { id: 1, name: "Minimalist Cotton Tee", price: 35.00, category: "apparel", icon: "fa-shirt", color: "Off-White" },
-            { id: 2, name: "Acetate Sunglasses", price: 120.00, category: "accessories", icon: "fa-glasses", color: "Tortoise Shell" },
-            { id: 3, name: "Leather Card Wallet", price: 45.00, category: "accessories", icon: "fa-wallet", color: "Tan Brown" },
-            { id: 4, name: "Insulated Water Flask", price: 28.00, category: "gear", icon: "fa-bottle-water", color: "Matte Black" },
-            { id: 5, name: "Premium Wireless Headset", price: 250.00, category: "gear", icon: "fa-headphones", color: "Space Gray" },
-            { id: 6, name: "Heavyweight Pullover Hoodie", price: 85.00, category: "apparel", icon: "fa-vest", color: "Charcoal" }
-        ];
-
-        // State Machine Objects
-        let cart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
         let currentCategory = 'all';
 
-        // Initialize Core View on Load
-        document.addEventListener('DOMContentLoaded', () => {
-            renderProducts();
-            updateCartUI();
-        });
-
-        // Dynamic Product DOM Rendering Controller
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             const searchVal = document.getElementById('search-input').value.toLowerCase();
             grid.innerHTML = '';
 
             const filtered = products.filter(p => {
-                const matchesCategory = currentCategory === 'all' || p.category === currentCategory;
-                const matchesSearch = p.name.toLowerCase().includes(searchVal);
-                return matchesCategory && matchesSearch;
+                return (currentCategory === 'all' || p.category === currentCategory) && p.name.toLowerCase().includes(searchVal);
             });
 
-            if (filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-12 text-slate-400"><i class="fa-solid fa-box-open text-3xl mb-2 block"></i>No matching inventory products found.</div>`;
-                return;
-            }
-
-            filtered.forEach(product => {
+            filtered.forEach(p => {
                 grid.innerHTML += `
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition duration-200 group">
-                        <div>
-                            <div class="w-full h-48 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-slate-100 transition duration-200">
-                                <i class="fa-solid ${product.icon} text-4xl"></i>
+                    <div class="bg-white p-4 rounded-2xl border border-slate-100 flex flex-col justify-between hover:shadow-md transition">
+                        <a href="product.html?id=${p.id}" class="block group">
+                            <div class="w-full h-48 bg-slate-50 rounded-xl flex items-center justify-center text-slate-400 group-hover:bg-slate-100 transition">
+                                <i class="fa-solid ${p.icon} text-4xl"></i>
                             </div>
-                            <div class="mt-4 flex justify-between items-start">
-                                <div>
-                                    <h3 class="text-sm font-bold text-slate-800">${product.name}</h3>
-                                    <p class="text-xs text-slate-400 mt-0.5">${product.color}</p>
-                                </div>
-                                <p class="text-sm font-extrabold text-slate-900">$${product.price.toFixed(2)}</p>
-                            </div>
-                        </div>
-                        <button onclick="addToCart(${product.id})" class="mt-5 w-full bg-slate-900 text-white py-2.5 rounded-xl text-xs font-semibold hover:bg-indigo-600 transition duration-200">
-                            Add to Cart
-                        </button>
+                            <h3 class="text-sm font-bold text-slate-800 mt-4 group-hover:text-indigo-600 transition">${p.name}</h3>
+                            <p class="text-xs text-slate-400 mt-1">${p.color}</p>
+                            <p class="text-sm font-extrabold text-slate-900 mt-2">$${p.price.toFixed(2)}</p>
+                        </a>
+                        <button onclick="addToCart(${p.id})" class="mt-4 w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-semibold hover:bg-indigo-600 transition">Add to Cart</button>
                     </div>
                 `;
             });
         }
 
-        // Mutation Handlers: Cart Alterations
-        function addToCart(id) {
-            const targetProduct = products.find(p => p.id === id);
-            const cartItem = cart.find(item => item.id === id);
-
-            if (cartItem) {
-                cartItem.quantity += 1;
-            } else {
-                cart.push({ ...targetProduct, quantity: 1 });
-            }
-
-            syncCart();
-            showToast(`Added ${targetProduct.name} to cart.`);
+        function setCategory(cat) {
+            currentCategory = cat;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.className = "filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-white text-slate-600 transition border border-slate-200");
+            document.getElementById(`filter-${cat}`).className = "filter-btn px-4 py-2 rounded-full text-xs font-semibold bg-indigo-600 text-white transition";
+            renderProducts();
         }
 
-        function updateQuantity(id, delta) {
-            const cartItem = cart.find(item => item.id === id);
-            if (!cartItem) return;
-
-            cartItem.quantity += delta;
-            if (cartItem.quantity <= 0) {
-                cart = cart.filter(item => item.id !== id);
-            }
-
-            syncCart();
-        }
-
-        function syncCart() {
-            localStorage.setItem('nexus_cart', JSON.stringify(cart));
-            updateCartUI();
-        }
-
-        // View Controller: Cart Renderer
-        function updateCartUI() {
-            const itemsContainer = document.getElementById('cart-items');
-            const countBadge = document.getElementById('cart-count');
-            const subtotalLabel = document.getElementById('cart-subtotal');
-            const totalLabel = document.getElementById('cart-total');
-
-            const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
-            countBadge.innerText = totalItems;
-
-            if (cart.length === 0) {
-                itemsContainer.innerHTML = `<div class="text-center py-16 text-slate-400"><i class="fa-solid fa-basket-shopping text-3xl mb-2 block"></i>Your cart is currently empty.</div>`;
-                subtotalLabel.innerText = '$0.00';
-                totalLabel.innerText = '$0.00';
-                return;
-            }
-
-            itemsContainer.innerHTML = '';
-            let cumulativePrice = 0;
-
-            cart.forEach(item => {
-                const itemCost = item.price * item.quantity;
-                cumulativePrice += itemCost;
-
-                itemsContainer.innerHTML += `
-                    <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
+        // Initialize unique page view context
+        document.addEventListener('DOMContentLoaded', renderProducts);
+    </script>
+</body>
+</html>
