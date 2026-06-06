@@ -3,53 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Checkout Summary</title>
+    <title>Secure Checkout Summary - NexusShop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="js/features.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-200">
 
-    <nav class="bg-white border-b border-slate-100 h-16 flex items-center px-4 max-w-7xl mx-auto w-full">
-        <a href="index.html" class="text-xl font-black text-slate-900 tracking-tight">NEXUS<span class="text-indigo-600">SHOP</span></a>
+    <nav class="bg-white border-b border-slate-100 dark:bg-slate-800 dark:border-slate-700 h-16 flex items-center px-4 sticky top-0 z-40 transition-colors duration-200">
+        <div class="max-w-7xl mx-auto w-full flex justify-between items-center">
+            <a href="index.html" class="text-xl font-black text-slate-900 dark:text-white tracking-tight">NEXUS<span class="text-indigo-600">SHOP</span></a>
+            
+            <button onclick="toggleDarkMode()" class="text-slate-700 dark:text-slate-300 p-2 focus:outline-none hover:text-indigo-600 dark:hover:text-amber-400 transition">
+                <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                <i class="fa-solid fa-sun text-lg hidden dark:block text-amber-400"></i>
+            </button>
+        </div>
     </nav>
 
     <main class="flex-grow max-w-7xl mx-auto w-full px-4 py-12 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <form onsubmit="handlePayment(event)" class="lg:col-span-7 bg-white p-8 rounded-2xl border border-slate-100 space-y-6">
-            <h2 class="text-xl font-black">Shipping Details</h2>
+        
+        <form onsubmit="handlePayment(event)" class="lg:col-span-7 bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-100 dark:border-slate-700 space-y-6 shadow-sm transition-colors duration-200">
+            <h2 class="text-xl font-black text-slate-900 dark:text-white">Shipping Details</h2>
             <div class="grid grid-cols-2 gap-4">
-                <div><label class="text-xs font-bold text-slate-400 block mb-1">First Name</label><input type="text" required class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-indigo-600"></div>
-                <div><label class="text-xs font-bold text-slate-400 block mb-1">Last Name</label><input type="text" required class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-indigo-600"></div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">First Name</label>
+                    <input type="text" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">Last Name</label>
+                    <input type="text" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+                </div>
             </div>
-            <div><label class="text-xs font-bold text-slate-400 block mb-1">Street Address</label><input type="text" required class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-indigo-600"></div>
+            <div>
+                <label class="text-xs font-bold text-slate-400 block mb-1">Street Address</label>
+                <input type="text" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+            </div>
             
-            <h2 class="text-xl font-black pt-4">Simulated Card Payment</h2>
-            <div><label class="text-xs font-bold text-slate-400 block mb-1">Card Number</label><input type="text" required placeholder="4111 2222 3333 4444" class="w-full bg-slate-50 border border-slate-200 p-2.5 rounded-xl text-sm focus:outline-indigo-600"></div>
+            <h2 class="text-xl font-black pt-4 text-slate-900 dark:text-white">Simulated Card Payment</h2>
+            <div>
+                <label class="text-xs font-bold text-slate-400 block mb-1">Card Number</label>
+                <input type="text" required placeholder="4111 2222 3333 4444" class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+            </div>
             
-            <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 mt-6">Authorize Mock Payment</button>
+            <button type="submit" class="w-full bg-indigo-600 text-white py-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 dark:shadow-none mt-6">
+                Authorize Mock Payment
+            </button>
         </form>
 
-        <div class="lg:col-span-5 bg-white p-8 rounded-2xl border border-slate-100 h-fit space-y-4">
-            <h2 class="text-xl font-black">Order Summary</h2>
-            <div id="checkout-list" class="divide-y divide-slate-100 max-h-80 overflow-y-auto pr-2 space-y-1"></div>
-            <div class="pt-4 border-t border-slate-100 space-y-2 text-sm text-slate-500">
-                <div class="flex justify-between"><span>Subtotal</span><span id="sub-val">$0.00</span></div>
-                <div class="flex justify-between"><span>Shipping</span><span class="text-emerald-600 font-bold">FREE</span></div>
-                <div class="flex justify-between font-black text-slate-900 text-base pt-2 border-t"><span>Total</span><span id="tot-val">$0.00</span></div>
+        <div class="lg:col-span-5 bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-100 dark:border-slate-700 h-fit space-y-4 shadow-sm transition-colors duration-200">
+            <h2 class="text-xl font-black text-slate-900 dark:text-white">Order Summary</h2>
+            
+            <div id="checkout-list" class="divide-y divide-slate-100 dark:divide-slate-700 max-h-64 overflow-y-auto pr-2 space-y-1"></div>
+            
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
+                <label class="text-xs font-bold text-slate-400 block mb-1">Have a promo code?</label>
+                <div class="flex space-x-2">
+                    <input type="text" id="coupon-input" placeholder="Try WELCOME10, NEXUS20, or JEEMAIN" class="w-full bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 p-2.5 rounded-xl text-xs uppercase font-semibold text-slate-900 dark:text-white focus:outline-indigo-600">
+                    <button type="button" onclick="applyCoupon()" class="bg-slate-900 dark:bg-slate-600 text-white px-4 py-2.5 rounded-xl text-xs font-bold hover:bg-indigo-600 transition">Apply</button>
+                </div>
+                <p id="coupon-message" class="text-xs mt-1.5 hidden"></p>
+            </div>
+
+            <div class="pt-4 border-t border-slate-100 dark:border-slate-700 space-y-2 text-sm text-slate-500 dark:text-slate-400">
+                <div class="flex justify-between">
+                    <span>Subtotal</span>
+                    <span id="sub-val" class="font-medium text-slate-800 dark:text-slate-200">$0.00</span>
+                </div>
+                <div id="discount-row" class="flex justify-between text-emerald-600 dark:text-emerald-400 font-medium hidden">
+                    <span>Promo Discount</span>
+                    <span id="discount-val">-$0.00</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Shipping</span>
+                    <span class="text-emerald-600 dark:text-emerald-400 font-bold">FREE</span>
+                </div>
+                <div class="flex justify-between font-black text-slate-900 dark:text-white text-base pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <span>Total</span>
+                    <span id="tot-val">$0.00</span>
+                </div>
             </div>
         </div>
     </main>
 
     <script>
+        // Set local state scope context boundaries
+        let sub = 0;
+
         document.addEventListener('DOMContentLoaded', () => {
             const checkoutList = document.getElementById('checkout-list');
             const localCart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
             
+            // Safe Redirect Fallback condition if cart array clears mid-session
             if(localCart.length === 0) {
                 window.location.href = 'index.html';
                 return;
             }
 
-            let sub = 0;
             checkoutList.innerHTML = '';
             localCart.forEach(item => {
                 const cost = item.price * item.quantity;
@@ -57,15 +107,15 @@
                 checkoutList.innerHTML += `
                     <div class="flex justify-between items-center py-3 text-xs">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-slate-50 rounded-lg overflow-hidden border flex-shrink-0">
+                            <div class="w-10 h-10 bg-slate-50 dark:bg-slate-700 rounded-lg overflow-hidden border border-slate-100 dark:border-slate-600 flex-shrink-0">
                                 <img src="${item.image}" class="w-full h-full object-cover">
                             </div>
                             <div>
-                                <p class="font-bold text-slate-800">${item.name}</p>
+                                <p class="font-bold text-slate-800 dark:text-slate-200">${item.name}</p>
                                 <p class="text-slate-400 mt-0.5">Qty: ${item.quantity}</p>
                             </div>
                         </div>
-                        <span class="font-bold text-slate-900">$${cost.toFixed(2)}</span>
+                        <span class="font-bold text-slate-900 dark:text-white">$${cost.toFixed(2)}</span>
                     </div>`;
             });
 
@@ -73,8 +123,43 @@
             document.getElementById('tot-val').innerText = `$${sub.toFixed(2)}`;
         });
 
+        // Client Coupon Discount Multipliers Evaluator
+        function applyCoupon() {
+            const codeInput = document.getElementById('coupon-input');
+            const code = codeInput.value.trim().toUpperCase();
+            const msg = document.getElementById('coupon-message');
+            const discountRow = document.getElementById('discount-row');
+            const discountVal = document.getElementById('discount-val');
+            const totalLabel = document.getElementById('tot-val');
+            
+            // Check cross-file execution compatibility loop with object dictionary keys defined in js/features.js
+            if (typeof COUPONS !== 'undefined' && COUPONS[code]) {
+                const discountPercent = COUPONS[code];
+                const discountAmount = sub * discountPercent;
+                const newTotal = sub - discountAmount;
+                
+                // Redraw price summary fields instantly
+                discountVal.innerText = `-$${discountAmount.toFixed(2)}`;
+                totalLabel.innerText = `$${newTotal.toFixed(2)}`;
+                
+                discountRow.classList.remove('hidden');
+                msg.className = "text-xs mt-1.5 text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1";
+                msg.innerHTML = `<i class="fa-solid fa-tag"></i> Code "${code}" successfully applied! ${(discountPercent * 100)}% off saved.`;
+                
+                // Lock field inputs to prevent stack exploitation modifications
+                codeInput.disabled = true;
+            } else {
+                discountRow.classList.add('hidden');
+                totalLabel.innerText = `$${sub.toFixed(2)}`;
+                msg.className = "text-xs mt-1.5 text-red-500 font-bold flex items-center gap-1";
+                msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Invalid or expired discount code.`;
+            }
+            msg.classList.remove('hidden');
+        }
+
         function handlePayment(e) {
             e.preventDefault();
+            // Clear checkout context footprint strings securely
             localStorage.removeItem('nexus_cart');
             window.location.href = 'success.html';
         }
