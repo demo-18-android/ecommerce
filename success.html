@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Confirmed</title>
+    <title>Order Confirmed - NexusShop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex items-center justify-center px-4">
     <div class="max-w-md w-full bg-white p-8 rounded-2xl border border-slate-100 text-center shadow-sm">
@@ -13,10 +14,127 @@
             <i class="fa-solid fa-check-to-slot"></i>
         </div>
         <h1 class="text-2xl font-black text-slate-900">Payment Confirmed!</h1>
-        <p class="text-slate-500 text-sm mt-3 leading-relaxed">Your order transaction sequence has successfully completed. Persistent cache cleared.</p>
+        <p class="text-slate-500 text-sm mt-3 leading-relaxed">Your order transaction sequence has successfully completed. Your receipt parameters have been compiled locally below.</p>
+        
+        <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-100 text-left space-y-2">
+            <p class="text-xs font-bold text-slate-400">ORDER NO: <span id="lbl-order" class="text-slate-800">Compiling...</span></p>
+            <p class="text-xs font-bold text-slate-400">TOTAL COST: <span id="lbl-total" class="text-slate-800">Compiling...</span></p>
+            <button onclick="downloadReceiptPDF()" class="w-full mt-2 bg-indigo-600 text-white text-xs font-bold py-2.5 rounded-xl hover:bg-indigo-700 transition shadow-md flex items-center justify-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF Receipt
+            </button>
+        </div>
+
         <div class="mt-8 border-t border-slate-100 pt-6">
             <a href="index.html" class="inline-block bg-slate-900 text-white text-xs font-bold px-6 py-3 rounded-xl hover:bg-indigo-600 transition shadow-md">Continue Shopping</a>
         </div>
     </div>
+
+    <script>
+        // Fetch scoped cache objects map properties configuration instances
+        const receipt = JSON.parse(localStorage.getItem('nexus_invoice_receipt'));
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!receipt) {
+                document.getElementById('lbl-order').innerText = "NOT LOCATED";
+                document.getElementById('lbl-total').innerText = "$0.00";
+                return;
+            }
+            document.getElementById('lbl-order').innerText = receipt.orderId;
+            document.getElementById('lbl-total').innerText = `$${receipt.pricing.total.toFixed(2)}`;
+        });
+
+        function downloadReceiptPDF() {
+            if (!receipt) {
+                alert("Invoice generation context map instance missing. Unable to export.");
+                return;
+            }
+
+            // Target the constructor function inside loaded global windows instance elements
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+            // Set corporate design palette configuration bounds parameters (Minimalist Dark Theme style vectors)
+            doc.setFillColor(15, 23, 42); // Slate-900 Brand Banner Color
+            doc.rect(0, 0, 210, 35, "F");
+
+            // Brand Typography Heading 
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(22);
+            doc.text("NEXUSSHOP INVOICE", 15, 22);
+
+            // Metadata summary parameters text lines
+            doc.setFontSize(10);
+            doc.setFont("Helvetica", "normal");
+            doc.text(`Order Ref: ${receipt.orderId}`, 145, 18);
+            doc.text(`Date: ${receipt.date}`, 145, 24);
+
+            // Customer address box grouping coordinates vectors
+            doc.setTextColor(51, 65, 85);
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("Billed To:", 15, 50);
+
+            doc.setFont("Helvetica", "normal");
+            doc.setFontSize(10);
+            doc.text(`Name: ${receipt.customer.first} ${receipt.customer.last}`, 15, 56);
+            doc.text(`Address: ${receipt.customer.address}`, 15, 62);
+
+            // Construct invoice line table metadata grid headers bounds
+            doc.setDrawColor(226, 232, 240); // Slate-200 border lines
+            doc.line(15, 75, 195, 75);
+            
+            doc.setFont("Helvetica", "bold");
+            doc.text("Product Description", 15, 81);
+            doc.text("Qty", 120, 81);
+            doc.text("Unit Price", 145, 81);
+            doc.text("Total", 175, 81);
+            doc.line(15, 84, 195, 84);
+
+            // Loop and draw active purchase item metadata nodes
+            doc.setFont("Helvetica", "normal");
+            let currentY = 91;
+
+            receipt.items.forEach(item => {
+                const totalCost = item.price * item.quantity;
+                doc.text(item.name, 15, currentY);
+                doc.text(item.quantity.toString(), 122, currentY);
+                doc.text(`$${item.price.toFixed(2)}`, 145, currentY);
+                doc.text(`$${totalCost.toFixed(2)}`, 175, currentY);
+                
+                currentY += 8; // Row vector height displacement increment step
+            });
+
+            // Tally Invoice Footer Calculation Layout Columns
+            currentY += 4;
+            doc.line(15, currentY, 195, currentY);
+            
+            currentY += 8;
+            doc.text("Subtotal:", 145, currentY);
+            doc.text(`$${receipt.pricing.subtotal.toFixed(2)}`, 175, currentY);
+
+            if (receipt.pricing.discount > 0) {
+                currentY += 6;
+                doc.setTextColor(16, 185, 129); // Emerald-500 Success text green vectors
+                doc.text(`Promo (${receipt.pricing.coupon}):`, 145, currentY);
+                doc.text(`-$${receipt.pricing.discount.toFixed(2)}`, 175, currentY);
+                doc.setTextColor(51, 65, 85); // Revert down to neutral dark
+            }
+
+            currentY += 6;
+            doc.text("Shipping:", 145, currentY);
+            doc.text("FREE", 175, currentY);
+
+            // Final Absolute Grand Total line bounds metrics
+            currentY += 6;
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(12);
+            doc.text("Grand Total:", 145, currentY);
+            doc.text(`$${receipt.pricing.total.toFixed(2)}`, 175, currentY);
+
+            // Print document binary context frame triggers straight out inside user client downloads explorer folder paths
+            doc.save(`Invoice-${receipt.orderId}.pdf`);
+        }
+    </script>
 </body>
 </html>
