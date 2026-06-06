@@ -28,16 +28,16 @@
             <div class="grid grid-cols-2 gap-4">
                 <div>
                     <label class="text-xs font-bold text-slate-400 block mb-1">First Name</label>
-                    <input type="text" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+                    <input type="text" id="cust-first" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
                 </div>
                 <div>
                     <label class="text-xs font-bold text-slate-400 block mb-1">Last Name</label>
-                    <input type="text" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+                    <input type="text" id="cust-last" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
                 </div>
             </div>
             <div>
                 <label class="text-xs font-bold text-slate-400 block mb-1">Street Address</label>
-                <input type="text" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
+                <input type="text" id="cust-address" required class="w-full bg-slate-50 border border-slate-200 dark:bg-slate-700 dark:border-slate-600 p-2.5 rounded-xl text-sm focus:outline-indigo-600 text-slate-900 dark:text-white">
             </div>
             
             <h2 class="text-xl font-black pt-4 text-slate-900 dark:text-white">Simulated Card Payment</h2>
@@ -87,14 +87,14 @@
     </main>
 
     <script>
-        // Set local state scope context boundaries
         let sub = 0;
+        let activeDiscount = 0;
+        let appliedCouponCode = "NONE";
 
         document.addEventListener('DOMContentLoaded', () => {
             const checkoutList = document.getElementById('checkout-list');
             const localCart = JSON.parse(localStorage.getItem('nexus_cart')) || [];
             
-            // Safe Redirect Fallback condition if cart array clears mid-session
             if(localCart.length === 0) {
                 window.location.href = 'index.html';
                 return;
@@ -123,7 +123,6 @@
             document.getElementById('tot-val').innerText = `$${sub.toFixed(2)}`;
         });
 
-        // Client Coupon Discount Multipliers Evaluator
         function applyCoupon() {
             const codeInput = document.getElementById('coupon-input');
             const code = codeInput.value.trim().toUpperCase();
@@ -132,34 +131,53 @@
             const discountVal = document.getElementById('discount-val');
             const totalLabel = document.getElementById('tot-val');
             
-            // Check cross-file execution compatibility loop with object dictionary keys defined in js/features.js
             if (typeof COUPONS !== 'undefined' && COUPONS[code]) {
                 const discountPercent = COUPONS[code];
-                const discountAmount = sub * discountPercent;
-                const newTotal = sub - discountAmount;
+                activeDiscount = sub * discountPercent;
+                appliedCouponCode = code;
+                const newTotal = sub - activeDiscount;
                 
-                // Redraw price summary fields instantly
-                discountVal.innerText = `-$${discountAmount.toFixed(2)}`;
+                discountVal.innerText = `-$${activeDiscount.toFixed(2)}`;
                 totalLabel.innerText = `$${newTotal.toFixed(2)}`;
                 
                 discountRow.classList.remove('hidden');
                 msg.className = "text-xs mt-1.5 text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1";
-                msg.innerHTML = `<i class="fa-solid fa-tag"></i> Code "${code}" successfully applied! ${(discountPercent * 100)}% off saved.`;
-                
-                // Lock field inputs to prevent stack exploitation modifications
+                msg.innerHTML = `<i class="fa-solid fa-tag"></i> Code "${code}" successfully applied!`;
                 codeInput.disabled = true;
             } else {
+                activeDiscount = 0;
+                appliedCouponCode = "NONE";
                 discountRow.classList.add('hidden');
                 totalLabel.innerText = `$${sub.toFixed(2)}`;
                 msg.className = "text-xs mt-1.5 text-red-500 font-bold flex items-center gap-1";
-                msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Invalid or expired discount code.`;
+                msg.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Invalid discount code.`;
             }
             msg.classList.remove('hidden');
         }
 
         function handlePayment(e) {
             e.preventDefault();
-            // Clear checkout context footprint strings securely
+            
+            // Build the dynamic invoice structured parameters object array cache
+            const invoiceData = {
+                orderId: "NEXUS-" + Math.floor(100000 + Math.random() * 900000),
+                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }),
+                customer: {
+                    first: document.getElementById('cust-first').value.trim(),
+                    last: document.getElementById('cust-last').value.trim(),
+                    address: document.getElementById('cust-address').value.trim()
+                },
+                items: JSON.parse(localStorage.getItem('nexus_cart')) || [],
+                pricing: {
+                    subtotal: sub,
+                    coupon: appliedCouponCode,
+                    discount: activeDiscount,
+                    total: sub - activeDiscount
+                }
+            };
+
+            // Cash parameters out inside cross-page cache before clearing main tray variables
+            localStorage.setItem('nexus_invoice_receipt', JSON.stringify(invoiceData));
             localStorage.removeItem('nexus_cart');
             window.location.href = 'success.html';
         }
