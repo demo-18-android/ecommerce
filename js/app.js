@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Mutate global data properties securely via runtime events mapping
 function addToCart(id, quantity = 1) {
-    // Ensure the ID parameter matches product database integers correctly
     const targetProduct = products.find(p => p.id === parseInt(id));
     if (!targetProduct) return;
 
@@ -19,14 +18,13 @@ function addToCart(id, quantity = 1) {
     if (cartItem) {
         cartItem.quantity += quantity;
     } else {
-        // Spread syntax safely isolates the target configuration profile values inside storage schema instances
         cart.push({ ...targetProduct, quantity: quantity });
     }
 
     syncCart();
     showToast(`Added ${targetProduct.name} to cart.`);
     
-    // Auto slide open the panel to instantly confirm actions visually to consumers
+    // Auto slide open the drawer panel to instantly confirm actions visually
     const drawer = document.getElementById('cart-drawer');
     if (drawer && drawer.classList.contains('translate-x-full')) {
         toggleCart();
@@ -60,7 +58,7 @@ function updateCartUI() {
     const totalItems = cart.reduce((sum, i) => sum + i.quantity, 0);
     if (countBadge) countBadge.innerText = totalItems;
 
-    // Safety check: Exit execution silently if target templates don't feature a side-drawer element layout (like success pages)
+    // Safety check: Exit execution silently if layout templates don't feature a side-drawer container element
     if (!itemsContainer) return;
 
     if (cart.length === 0) {
@@ -84,8 +82,8 @@ function updateCartUI() {
         itemsContainer.innerHTML += `
             <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs">
                 <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-slate-400 border border-slate-100">
-                        <i class="fa-solid ${item.icon}"></i>
+                    <div class="w-12 h-12 bg-white rounded-lg overflow-hidden border border-slate-100 flex-shrink-0">
+                        <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
                     </div>
                     <div>
                         <h4 class="font-bold text-slate-800">${item.name}</h4>
